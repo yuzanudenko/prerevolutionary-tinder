@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.Hibernate;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -33,22 +32,6 @@ public class Person {
 
     @Column(name = "GENDER_SEARCH")
     private String genderSearch;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "LIKED_PERSON",
-            joinColumns = {
-                    @JoinColumn(name = "MAIN_PERSON_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "LIKED_PERSON_ID", nullable = false, updatable = false)})
-    private List<LikedPerson> likedByMe;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "LIKED_PERSON",
-            joinColumns = {
-                    @JoinColumn(name = "LIKED_PERSON_ID", nullable = false, updatable = false)},
-            inverseJoinColumns = {
-                    @JoinColumn(name = "MAIN_PERSON_ID", nullable = false, updatable = false)})
-    private List<LikedPerson> likedMe;
 
     @Override
     public boolean equals(Object o) {

@@ -6,7 +6,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.liga.server.dto.PersonDto;
+import ru.liga.server.dto.mapping.PersonMapping;
+import ru.liga.server.model.LikedPerson;
 import ru.liga.server.model.Person;
+import ru.liga.server.repository.LikedPersonRepository;
 import ru.liga.server.repository.PersonRepository;
 
 import java.util.List;
@@ -16,6 +20,9 @@ import java.util.List;
 public class PersonService {
 
     private final PersonRepository personRepository;
+    private final LikedPersonRepository likedPersonRepository;
+
+    private final PersonMapping personMapping;
 
     public List<Person> findAll() {
         return personRepository.findAll();
@@ -35,7 +42,7 @@ public class PersonService {
 
     public List<Person> findAllSuitablePersons(Long personId) {
         int count = this.findSuitablePersonsCount(personId);
-        Pageable pageable = PageRequest.ofSize(count).withSort(Sort.by("id").ascending());
+        Pageable pageable = PageRequest.ofSize(count > 0 ? count : 1).withSort(Sort.by("id").ascending());
         return personRepository.findSuitablePersons(personId, pageable).getContent();
     }
 
@@ -47,5 +54,30 @@ public class PersonService {
 
     public int findSuitablePersonsCount(Long personId) {
         return personRepository.findSuitablePersonsCount(personId);
+    }
+
+    public void saveLikePerson(Long personId, Long likedPersonId) {
+        Long mainId = personRepository.findByPersonId(personId).getId();
+        Long likedId = personRepository.findByPersonId(likedPersonId).getId();
+        LikedPerson likedPerson = new LikedPerson(mainId, likedId);
+        likedPersonRepository.save(likedPerson);
+    }
+
+    public List<PersonDto> findAllFavoritePersons(Long personId) {
+        int count = this.getFavoritePersonsCount(personId);
+        Pageable pageable = PageRequest.ofSize(count > 0 ? count : 1).withSort(Sort.by("id").ascending());
+        Person mainPerson = personRepository.findByPersonId(personId);
+        return personMapping.createModelList(personRepository.findLikedPersons(personId, pageable).getContent(), mainPerson.getId());
+    }
+
+    public PersonDto findFavoritePerson(Long personId, int page) {
+        Pageable pageable = PageRequest.of(page - 1, 1, Sort.by("id").ascending());
+        Page<Person> statePage = personRepository.findLikedPersons(personId, pageable);
+        Person mainPerson = personRepository.findByPersonId(personId);
+        return personMapping.createModel(statePage.getContent().get(0), mainPerson.getId());
+    }
+
+    public int getFavoritePersonsCount(Long personId) {
+        return personRepository.findLikedPersonsCount(personId);
     }
 }

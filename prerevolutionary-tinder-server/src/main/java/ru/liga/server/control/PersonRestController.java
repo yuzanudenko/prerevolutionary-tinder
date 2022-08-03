@@ -3,6 +3,7 @@ package ru.liga.server.control;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import ru.liga.server.dto.PersonDto;
 import ru.liga.server.model.Person;
 import ru.liga.server.service.PersonService;
 
@@ -41,14 +42,38 @@ public class PersonRestController {
 
     @GetMapping("/{personId}/suitable/{page}")
     @ResponseStatus(HttpStatus.OK)
-    public Person findAllSuitablePersons(@PathVariable Long personId, @PathVariable int page) {
+    public Person findSuitablePerson(@PathVariable Long personId, @PathVariable int page) {
         return personService.findSuitablePerson(personId, page);
     }
 
     @GetMapping("/{personId}/suitable/count")
     @ResponseStatus(HttpStatus.OK)
-    public int findSuitablePersonsCount(@PathVariable Long personId) {
+    public int getSuitablePersonsCount(@PathVariable Long personId) {
         return personService.findSuitablePersonsCount(personId);
+    }
+
+    @PostMapping("/{personId}/favorite")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void likePerson(@PathVariable Long personId, @RequestBody Long likedPersonId) {
+        personService.saveLikePerson(personId, likedPersonId);
+    }
+
+    @GetMapping("/{personId}/favorite")
+    @ResponseStatus(HttpStatus.OK)
+    public List<PersonDto> findAllFavoritePersons(@PathVariable Long personId) {
+        return personService.findAllFavoritePersons(personId);
+    }
+
+    @GetMapping("/{personId}/favorite/{page}")
+    @ResponseStatus(HttpStatus.OK)
+    public PersonDto findFavoritePerson(@PathVariable Long personId, @PathVariable int page) {
+        return personService.findFavoritePerson(personId, page);
+    }
+
+    @GetMapping("/{personId}/favorite/count")
+    @ResponseStatus(HttpStatus.OK)
+    public int getFavoritePersonsCount(@PathVariable Long personId) {
+        return personService.getFavoritePersonsCount(personId);
     }
 
     @PostMapping
