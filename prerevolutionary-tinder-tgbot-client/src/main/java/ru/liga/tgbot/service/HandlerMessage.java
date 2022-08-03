@@ -7,7 +7,9 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import ru.liga.tgbot.cache.PersonCache;
 import ru.liga.tgbot.model.BotState;
 import ru.liga.tgbot.model.ButtonsCaptions;
@@ -31,11 +33,11 @@ public class HandlerMessage {
         Long userId = message.getFrom().getId();
 
 
-        /*log.info("New message from User:{}. userId: {}, chatId: {}, with text: {}",
+        log.info("New message from User:{}. userId: {}, chatId: {}, with text: {}",
                 message.getFrom().getUserName(),
                 userId,
                 message.getChatId().toString(),
-                message.getText());*/
+                message.getText());
 
         switch (messageText) {
             case "/start":
@@ -91,9 +93,23 @@ public class HandlerMessage {
                         .build()));
 
         personCache.addPersonCache(message.getChat().getId(), BotState.SET_SEX);
+
+/*        ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup();
+        List<KeyboardRow> keyboard = new ArrayList<>();
+        KeyboardRow row = new KeyboardRow();
+
+        row.add("Row 1 Button 1");
+        row.add("Row 1 Button 2");
+        row.add("Row 1 Button 3");
+
+        keyboard.add(row);
+
+        keyboardMarkup.setKeyboard(keyboard);*/
+
         return SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Вы сударь иль сударыня?")
+                //.replyMarkup(keyboardMarkup)
                 .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
                 .build();
     }
