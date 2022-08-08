@@ -19,7 +19,7 @@ public class PersonService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        URI url = new URI("http://localhost:8080/translate");
+        URI url = new URI("http://localhost:8085/persons");
         PersonDTO objEmp = new PersonDTO(person);
 
         HttpEntity<PersonDTO> requestEntity = new HttpEntity<>(objEmp, headers);

@@ -6,11 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.liga.tgbot.cache.PersonCache;
 import ru.liga.tgbot.config.BotConfig;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 
 @Slf4j
@@ -38,8 +42,8 @@ public class TelegramBot extends TelegramLongPollingBot {
         if (update.hasMessage() && update.getMessage().hasText()) {
             try {
                 handleMessage(update);
-            } catch (TelegramApiException e) {
-                throw new RuntimeException(e);
+            } catch (TelegramApiException | IOException | URISyntaxException e) {
+                e.printStackTrace();
             }
         }
         if (update.hasCallbackQuery()) {
@@ -48,12 +52,23 @@ public class TelegramBot extends TelegramLongPollingBot {
     }
     @SneakyThrows
     private void handleCallBack(CallbackQuery callbackQuery) {
-            SendMessage message = handlerCallback.answerCallback(callbackQuery);
-            execute(message);
+        //execute(handlerCallback.answerCallback(callbackQuery));
+        SendPhoto sendPhoto = handlerCallback.handleSendPhoto(callbackQuery);
+        SendMessage sendMessage = handlerCallback.answerCallback(callbackQuery);
+        if (sendPhoto != null) {
+            execute(sendPhoto);
+        } else {
+            execute(sendMessage);
+        }
     }
 
-    private void handleMessage(Update update) throws TelegramApiException {
-        SendMessage message = handlerMessage.handleMessage(update);
-        execute(message);
+    private void handleMessage(Update update) throws TelegramApiException, IOException, URISyntaxException {
+        SendPhoto sendPhoto = handlerMessage.handleSendPhoto(update);
+        SendMessage sendMessage = handlerMessage.handleSendMessage(update);
+        if (sendPhoto != null) {
+            execute(sendPhoto);
+        } else {
+            execute(sendMessage);
+        }
     }
 }

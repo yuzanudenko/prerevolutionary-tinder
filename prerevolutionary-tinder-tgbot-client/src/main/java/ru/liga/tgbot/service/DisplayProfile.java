@@ -11,19 +11,33 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Arrays;
 
 @Component
 @AllArgsConstructor
 public class DisplayProfile {
     PersonCache personCache;
-    TranslateService translateService;
+    ProfileService profileService;
 
-    @SneakyThrows
-    String display(Long userId) {
+
+    String displayProfileWithText(Long userId) {
         Person person = personCache.getUsersCurrentPerson(userId);
-        return "✅Ваша анкета!\n\nИмя:" + "\n" + translateService.translate(person.getName()).getText() + "\n" +
-                "Описание:" + "\n" + translateService.translate(person.getDescription().toString()).getText() + "\n";
+        try {
+            return "Ваша анкета!\n\nИмя:" + "\n" + profileService.translate(person.getName()).getText() + "\n" +
+                    "Описание:" + "\n" + profileService.translate(person.getDescription().toString()).getText() + "\n";
+                    //"Результат:" + Arrays.toString(profileService.profileToPicture(person.getName() + person.getDescription().toString())).substring(1,40);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return "упс";
     }
+
+//    File displayProfileWithPicture(Long userId) {
+//        Person person = personCache.getUsersCurrentPerson(userId);
+//        return
+//    }
 
     @SneakyThrows
     void displayFile(){

@@ -4,14 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.prerevolutionarytindertgbotclient.model.PreReformText;
-import ru.liga.prerevolutionarytindertgbotclient.service.TranslateService;
+import ru.liga.prerevolutionarytindertgbotclient.service.ProfileService;
 
 @RestController
 @RequestMapping("/trans")*/
 public class TranslateRestController {
 /*
     @Autowired
-    private TranslateService translateService;
+    private ProfileService translateService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.OK)
