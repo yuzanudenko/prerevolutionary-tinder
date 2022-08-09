@@ -3,22 +3,16 @@ package ru.liga.tgbot.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
-import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
-import org.telegram.telegrambots.meta.api.objects.Update;
 import ru.liga.tgbot.cache.PersonCache;
 import ru.liga.tgbot.dto.PersonDTO;
 import ru.liga.tgbot.model.BotState;
 import ru.liga.tgbot.model.Sex;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 
 @Slf4j
@@ -28,6 +22,7 @@ public class HandlerCallback {
     private PersonCache personCache;
     private PersonService personService;
     private ProfileService profileService;
+    private DisplayProfile displayProfile;
 
     public SendMessage answerCallback(CallbackQuery callbackQuery) throws URISyntaxException {
 
@@ -42,13 +37,6 @@ public class HandlerCallback {
             return SendMessage.builder().chatId(message.getChatId().toString()).text("Поздравляю " + param[1] + ", теперь введите вашу инфу и описание").build();
         }
 
-//        if (botState.equals(BotState.SET_TYPE_SEARCH)) {
-//            personCache.setNewState(userId, BotState.PROFILE_DONE);
-//            personCache.setTypeSearch(userId, Sex.valueOf(param[0]));
-//            PersonDTO personDTO = personService.createPerson(personCache.getUsersCurrentPerson(userId));
-//            log.info(personDTO.toString());
-//            return SendMessage.builder().chatId(message.getChatId().toString()).text("Окей, начинаю поиск").build();
-//        }
         return SendMessage.builder().chatId(message.getChatId().toString()).text("Сорри, это не поддерживается").build();
     }
 
@@ -57,22 +45,25 @@ public class HandlerCallback {
         String[] param = callbackQuery.getData().split(":");
         Long userId = callbackQuery.getFrom().getId();
         BotState botState = personCache.getUsersCurrentBotState(userId);
+
         if (botState.equals(BotState.SET_TYPE_SEARCH)) {
             personCache.setNewState(userId, BotState.PROFILE_DONE);
             personCache.setTypeSearch(userId, Sex.valueOf(param[0]));
-            return getProfile(message);
+
+            personService.createPerson(personCache.getUsersCurrentPerson(userId));
+
+            return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
         }
 
-        return null;
-    }
+        if (botState.equals(BotState.PROFILE_DONE)) {
+            BotState newBotState = BotState.valueOf(param[0]);
+            personCache.setNewState(userId, newBotState);
 
-    private SendPhoto getProfile(Message message) throws IOException, URISyntaxException {
-        InputStream inputStream = new ByteArrayInputStream(profileService.profileToPicture("Никита Афанасьев 14 лет, пошлый любитель пенного"));
-        File file = new File("prerevolutionary-tinder-tgbot-client/src/main/resources/image.jpg");
-        InputFile inputFile = new InputFile(file);
-        return SendPhoto.builder()
-                .chatId(message.getChatId().toString())
-                .photo(inputFile)
-                .build();
+            PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
+            return displayProfile.getProfile(message, personDTO.getNameAndDescription());
+        }
+
+
+        return null;
     }
 }

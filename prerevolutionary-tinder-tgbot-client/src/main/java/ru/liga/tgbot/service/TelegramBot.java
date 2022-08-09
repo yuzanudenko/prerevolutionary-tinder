@@ -47,12 +47,15 @@ public class TelegramBot extends TelegramLongPollingBot {
             }
         }
         if (update.hasCallbackQuery()) {
-            handleCallBack(update.getCallbackQuery());
+            try {
+                handleCallBack(update.getCallbackQuery());
+            } catch (IOException | URISyntaxException | TelegramApiException e) {
+                e.printStackTrace();
+            }
         }
     }
-    @SneakyThrows
-    private void handleCallBack(CallbackQuery callbackQuery) {
-        //execute(handlerCallback.answerCallback(callbackQuery));
+
+    private void handleCallBack(CallbackQuery callbackQuery) throws IOException, URISyntaxException, TelegramApiException {
         SendPhoto sendPhoto = handlerCallback.handleSendPhoto(callbackQuery);
         SendMessage sendMessage = handlerCallback.answerCallback(callbackQuery);
         if (sendPhoto != null) {

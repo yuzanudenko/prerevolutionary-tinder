@@ -29,4 +29,29 @@ public class PersonService {
 
         return responseEntity;
     }
+
+    public PersonDTO getPerson(Long userId) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        URI url = new URI("http://localhost:8085/persons/" + userId);
+
+        RestTemplate restTemplate = new RestTemplate();
+        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
+
+        return responseEntity;
+    }
+
+    public PersonDTO getSuitablePerson(Long userId, int page) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        URI url = new URI("http://localhost:8085/persons/" + userId + "/suitable/" + page);
+
+        RestTemplate restTemplate = new RestTemplate();
+        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
+
+        return responseEntity;
+    }
+
 }

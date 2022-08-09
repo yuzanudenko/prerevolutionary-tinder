@@ -25,4 +25,8 @@ public class PersonDTO {
         this.description = person.getDescription().toString();
         this.genderSearch = person.getTypeSearch().toString();
     }
+
+    public String getNameAndDescription() {
+        return fullName + " " + description;
+    }
 }

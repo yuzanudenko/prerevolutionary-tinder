@@ -1,7 +1,7 @@
 package ru.liga.tgbot.model;
 
 public enum ButtonsCaptions {
-    MALE("Сударъ"),FEMALE("Сударыня"),BI("Всех"),LEFT("Влево"),RIGHT("Вправо"),MENU("Меню");
+    MALE("Сударъ"),FEMALE("Сударыня"),BI("Всех"),LEFT("Влево"),RIGHT("Вправо"),SEARCH("Поиск"),PROFILE("Анкета"),FAVORITES("Любимцы"),MENU("Меню");
 
     private String caption;
 

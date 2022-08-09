@@ -44,6 +44,11 @@ public class PersonCache {
         log.info("Set to user: " + userId + " name, descr " + person);
     }
 
+    public String getNameAndDescription(Long userId) {
+        Person result = getUsersCurrentPerson(userId);
+        return result.getName() + " " + result.getDescription();
+    }
+
     public void setNewState(Long userId, BotState botState) {
         for (Person person : persons) {
             if (person.getId().equals(userId)) {

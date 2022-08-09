@@ -5,5 +5,7 @@ public enum BotState {
     SET_SEX,
     SET_PROFILE_INFO,
     SET_TYPE_SEARCH,
-    PROFILE_DONE;
+    PROFILE_DONE,
+    SEARCH,
+    FAVORITES;
 }
