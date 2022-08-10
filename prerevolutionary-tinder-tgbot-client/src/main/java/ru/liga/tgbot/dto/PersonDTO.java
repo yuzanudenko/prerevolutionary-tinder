@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import ru.liga.tgbot.model.BotState;
+import ru.liga.tgbot.model.ButtonsCaptions;
 import ru.liga.tgbot.model.Person;
 
 @ToString
@@ -17,6 +19,7 @@ public class PersonDTO {
     private String fullName;
     private String description;
     private String genderSearch;
+    private String status;
 
     public PersonDTO(Person person) {
         this.gender = person.getSex().toString();
@@ -24,9 +27,13 @@ public class PersonDTO {
         this.fullName = person.getName();
         this.description = person.getDescription().toString();
         this.genderSearch = person.getTypeSearch().toString();
+        
     }
 
     public String getNameAndDescription() {
-        return fullName + " " + description;
+        return fullName + "\n" + description;
+    }
+    public String NameWithStatusDescription() {
+        return fullName + " - " + ButtonsCaptions.valueOf(status).getCaption() + "\n" + description;
     }
 }

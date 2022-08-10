@@ -75,25 +75,49 @@ public class HandlerMessage {
         if (botState.equals(BotState.SEARCH)) {
             if (messageText.equals(ButtonsCaptions.RIGHT.getCaption())) {
                 personService.likePerson(userId, personCache.getLikedPersonId(userId));
-                return getNextProfile(message, userId);
+                return getNextLikedProfile(message, userId);
             }
             if (messageText.equals(ButtonsCaptions.LEFT.getCaption())) {
-                return getNextProfile(message, userId);
+                return getNextLikedProfile(message, userId);
             }
             if (messageText.equals(ButtonsCaptions.MENU.getCaption())) {
                 personCache.setNewState(userId, BotState.PROFILE_DONE);
                 return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
             }
         }
+        if (botState.equals(BotState.FAVORITES)) {
+            if (messageText.equals(ButtonsCaptions.RIGHT.getCaption())) {
+                return getNextFavoriteProfile(message, userId);
+            }
+            if (messageText.equals(ButtonsCaptions.MENU.getCaption())) {
+                personCache.setNewState(userId, BotState.PROFILE_DONE);
+                return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
+            }
+            if (messageText.equals(ButtonsCaptions.LEFT.getCaption())) {
+                return getPrevFavoriteProfile(message, userId);
+            }
+        }
 
         return null;
     }
 
-    private SendPhoto getNextProfile(Message message, Long userId) throws URISyntaxException, IOException {
+    private SendPhoto getNextLikedProfile(Message message, Long userId) throws URISyntaxException, IOException {
         int pagesCounter = personCache.incrementPagesCounter(userId);
         PersonDTO personDTO = personService.getSuitablePerson(userId, pagesCounter);
         personCache.setLikedPersonId(userId, personDTO.getPersonId());
         return displayProfile.getProfile(message, personDTO.getNameAndDescription());
+    }
+
+    private SendPhoto getNextFavoriteProfile(Message message, Long userId) throws URISyntaxException, IOException {
+        int pagesCounter = personCache.incrementPagesCounter(userId);
+        PersonDTO personDTO = personService.getFavoritePerson(userId, pagesCounter);
+        return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
+    }
+
+    private SendPhoto getPrevFavoriteProfile(Message message, Long userId) throws URISyntaxException, IOException {
+        int pagesCounter = personCache.minusPagesCounter(userId);
+        PersonDTO personDTO = personService.getFavoritePerson(userId, pagesCounter);
+        return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
     }
 
     private SendMessage getSendMessageQuestionTypeSearch(String messageText, Message message, Long userId) throws IOException, URISyntaxException {

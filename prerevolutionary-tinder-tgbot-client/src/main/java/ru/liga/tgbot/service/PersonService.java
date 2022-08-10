@@ -54,11 +54,32 @@ public class PersonService {
         return responseEntity;
     }
 
+    public PersonDTO getFavoritePerson(Long userId, int page) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        URI url = new URI("http://localhost:8085/persons/" + userId + "/favorite/" + page);
+
+        RestTemplate restTemplate = new RestTemplate();
+        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
+
+        return responseEntity;
+    }
+
     public Integer getCountSuitablePerson(Long userId) throws URISyntaxException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         URI url = new URI("http://localhost:8085/persons/" + userId + "/suitable/count");
+        RestTemplate restTemplate = new RestTemplate();
+        return restTemplate.getForObject(url, Integer.class);
+    }
+
+    public Integer getCountFavoritePerson(Long userId) throws URISyntaxException {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        URI url = new URI("http://localhost:8085/persons/" + userId + "/favorite/count");
         RestTemplate restTemplate = new RestTemplate();
         return restTemplate.getForObject(url, Integer.class);
     }

@@ -52,19 +52,28 @@ public class HandlerCallback {
 
             personService.createPerson(personCache.getUsersCurrentPerson(userId));
 
-            return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
+            String text = personCache.getNameAndDescription(userId);
+            return displayProfile.getMyProfile(message, text);
         }
 
 
         if (botState.equals(BotState.PROFILE_DONE)) {
             BotState newBotState = BotState.valueOf(param[0]);
             personCache.setNewState(userId, newBotState);
-
-            int pagesCounter = personService.getCountSuitablePerson(userId);
-            personCache.setPages(userId, pagesCounter);
-            PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
-            personCache.setLikedPersonId(userId, personDTO.getPersonId());
-            return displayProfile.getProfile(message, personDTO.getNameAndDescription());
+            if (newBotState.equals(BotState.SEARCH)) {
+                int pagesCounter = personService.getCountSuitablePerson(userId);
+                personCache.setPages(userId, pagesCounter);
+                PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
+                personCache.setLikedPersonId(userId, personDTO.getPersonId());
+                return displayProfile.getProfile(message, personDTO.getNameAndDescription());
+            }
+            if (newBotState.equals(BotState.FAVORITES)) {
+                int pagesCounter = personService.getCountFavoritePerson(userId);
+                personCache.setPages(userId, pagesCounter);
+                PersonDTO personDTO = personService.getFavoritePerson(userId, 1);
+                personCache.setLikedPersonId(userId, personDTO.getPersonId());
+                return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
+            }
         }
 
 

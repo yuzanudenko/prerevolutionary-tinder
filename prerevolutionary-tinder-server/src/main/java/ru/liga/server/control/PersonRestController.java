@@ -76,7 +76,8 @@ public class PersonRestController {
     @GetMapping("/{personId}/favorite/count")
     @ResponseStatus(HttpStatus.OK)
     public int getFavoritePersonsCount(@PathVariable Long personId) {
-        return personService.getFavoritePersonsCount(personId);
+        //return personService.getFavoritePersonsCount(personId);
+        return personService.findAllFavoritePersons(personId).size();
     }
 
     @PostMapping

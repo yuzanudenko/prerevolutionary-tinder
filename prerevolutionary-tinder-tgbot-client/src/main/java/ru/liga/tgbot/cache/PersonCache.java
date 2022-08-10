@@ -50,7 +50,7 @@ public class PersonCache {
 
     public String getNameAndDescription(Long userId) {
         Person result = getUsersCurrentPerson(userId);
-        return result.getName() + " " + result.getDescription();
+        return result.getName() + "\n" + result.getDescription();
     }
 
     public void setNewState(Long userId, BotState botState) {
@@ -126,6 +126,20 @@ public class PersonCache {
             person.setPageCounter(counter + 1);
         } else {
             person.setPageCounter(1);
+        }
+        int resultCounter = person.getPageCounter();
+        log.info("Set to user: " + userId + " pagesCounter - " + resultCounter);
+        return resultCounter;
+    }
+
+    public int minusPagesCounter(Long userId) {
+        Person person = getUsersCurrentPerson(userId);
+        int counter = person.getPageCounter();
+        int pages = person.getPages();
+        if (counter == 1) {
+            person.setPageCounter(pages);
+        } else {
+            person.setPageCounter(counter - 1);
         }
         int resultCounter = person.getPageCounter();
         log.info("Set to user: " + userId + " pagesCounter - " + resultCounter);
