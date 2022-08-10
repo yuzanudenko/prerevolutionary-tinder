@@ -14,5 +14,8 @@ public class Person {
     private StringBuilder description;
     private Sex typeSearch;
     private BotState botState;
+    private int pageCounter;
+    private int pages;
+    private Long likedPersonId;
 
 }

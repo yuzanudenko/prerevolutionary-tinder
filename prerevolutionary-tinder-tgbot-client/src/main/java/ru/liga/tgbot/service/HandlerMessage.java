@@ -71,14 +71,29 @@ public class HandlerMessage {
                 return displayProfile.getMyProfile(message, person.getFullName() + " " + person.getDescription());
             }
         }
+
         if (botState.equals(BotState.SEARCH)) {
             if (messageText.equals(ButtonsCaptions.RIGHT.getCaption())) {
-                PersonDTO personDTO = personService.getSuitablePerson(userId, 2);
-                return displayProfile.getProfile(message, personDTO.getNameAndDescription());
+                personService.likePerson(userId, personCache.getLikedPersonId(userId));
+                return getNextProfile(message, userId);
+            }
+            if (messageText.equals(ButtonsCaptions.LEFT.getCaption())) {
+                return getNextProfile(message, userId);
+            }
+            if (messageText.equals(ButtonsCaptions.MENU.getCaption())) {
+                personCache.setNewState(userId, BotState.PROFILE_DONE);
+                return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
             }
         }
 
         return null;
+    }
+
+    private SendPhoto getNextProfile(Message message, Long userId) throws URISyntaxException, IOException {
+        int pagesCounter = personCache.incrementPagesCounter(userId);
+        PersonDTO personDTO = personService.getSuitablePerson(userId, pagesCounter);
+        personCache.setLikedPersonId(userId, personDTO.getPersonId());
+        return displayProfile.getProfile(message, personDTO.getNameAndDescription());
     }
 
     private SendMessage getSendMessageQuestionTypeSearch(String messageText, Message message, Long userId) throws IOException, URISyntaxException {

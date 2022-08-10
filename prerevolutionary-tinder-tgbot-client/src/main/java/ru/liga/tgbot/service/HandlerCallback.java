@@ -55,11 +55,15 @@ public class HandlerCallback {
             return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
         }
 
+
         if (botState.equals(BotState.PROFILE_DONE)) {
             BotState newBotState = BotState.valueOf(param[0]);
             personCache.setNewState(userId, newBotState);
 
+            int pagesCounter = personService.getCountSuitablePerson(userId);
+            personCache.setPages(userId, pagesCounter);
             PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
+            personCache.setLikedPersonId(userId, personDTO.getPersonId());
             return displayProfile.getProfile(message, personDTO.getNameAndDescription());
         }
 

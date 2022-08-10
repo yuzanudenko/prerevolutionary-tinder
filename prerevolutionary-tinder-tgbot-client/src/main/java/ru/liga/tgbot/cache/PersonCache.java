@@ -23,7 +23,11 @@ public class PersonCache {
     public void addPersonCache(Long userId, BotState botState) {
         if (!containsKey(userId)) {
             log.info("Add to cache user: " + userId);
-            persons.add(Person.builder().id(userId).botState(botState).build());
+            persons.add(Person.builder()
+                    .id(userId)
+                    .botState(botState)
+                    .pageCounter(1)
+                    .build());
         }
     }
 
@@ -95,5 +99,36 @@ public class PersonCache {
             }
         }
         return false;
+    }
+
+    public void setPages(Long userId, int counter) {
+        Person person = getUsersCurrentPerson(userId);
+        person.setPages(counter);
+        log.info("Set to user: " + userId + " pages - " + counter);
+    }
+
+    public void setLikedPersonId(Long userId, Long likedPersonId) {
+        Person person = getUsersCurrentPerson(userId);
+        person.setLikedPersonId(likedPersonId);
+        log.info("Set to user: " + userId + " likedPersonId - " + likedPersonId);
+    }
+
+    public Long getLikedPersonId(Long userId) {
+        Person person = getUsersCurrentPerson(userId);
+        return person.getLikedPersonId();
+    }
+
+    public int incrementPagesCounter(Long userId) {
+        Person person = getUsersCurrentPerson(userId);
+        int counter = person.getPageCounter();
+        int pages = person.getPages();
+        if (counter < pages) {
+            person.setPageCounter(counter + 1);
+        } else {
+            person.setPageCounter(1);
+        }
+        int resultCounter = person.getPageCounter();
+        log.info("Set to user: " + userId + " pagesCounter - " + resultCounter);
+        return resultCounter;
     }
 }
