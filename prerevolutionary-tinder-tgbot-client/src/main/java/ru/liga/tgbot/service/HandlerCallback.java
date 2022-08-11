@@ -63,6 +63,7 @@ public class HandlerCallback {
             if (newBotState.equals(BotState.SEARCH)) {
                 int pagesCounter = personService.getCountSuitablePerson(userId);
                 personCache.setPages(userId, pagesCounter);
+                personCache.resetPagesCounter(userId);
                 PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
                 personCache.setLikedPersonId(userId, personDTO.getPersonId());
                 return displayProfile.getProfile(message, personDTO.getNameAndDescription());
@@ -70,6 +71,7 @@ public class HandlerCallback {
             if (newBotState.equals(BotState.FAVORITES)) {
                 int pagesCounter = personService.getCountFavoritePerson(userId);
                 personCache.setPages(userId, pagesCounter);
+                personCache.resetPagesCounter(userId);
                 PersonDTO personDTO = personService.getFavoritePerson(userId, 1);
                 personCache.setLikedPersonId(userId, personDTO.getPersonId());
                 return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());

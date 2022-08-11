@@ -42,7 +42,8 @@ public class HandlerMessage {
 
         switch (messageText) {
             case "/start":
-                if (!personCache.containsKey(userId)) {
+                PersonDTO person = personService.getPerson(userId);
+                if (!personCache.containsKey(userId) && person == null) {
                     return getSengMessageQuestionSex(message);
                 }
 
@@ -51,9 +52,18 @@ public class HandlerMessage {
         BotState botState = personCache.getUsersCurrentBotState(userId);
 
         if (botState.equals(BotState.SET_PROFILE_INFO)) {
-            String[] inputDescr = messageText.split("\n");
-            if (inputDescr.length > 1) {
-                return getSendMessageQuestionTypeSearch(messageText, message, userId);
+            String[] inputDescrTypeFirst = messageText.split("\n");
+            String[] inputDescrTypeSecond = messageText.split(" ");
+            if (inputDescrTypeFirst.length > 1) {
+                return getSendMessageQuestionTypeSearch(messageText, message, userId, "\n");
+            }
+            if (inputDescrTypeSecond.length > 1) {
+                return getSendMessageQuestionTypeSearch(messageText, message, userId, " ");
+            } else {
+                return SendMessage.builder()
+                        .chatId(message.getChatId().toString())
+                        .text("Введите на первой строке - ваше имя, на второй строке описание!, либо все в одной строке!")
+                        .build();
             }
         }
 
@@ -68,6 +78,7 @@ public class HandlerMessage {
         if (botState.equals(BotState.DEF)) {
             PersonDTO person = personService.getPerson(userId);
             if (person != null) {
+                personCache.setPersonCache(userId, person);
                 return displayProfile.getMyProfile(message, person.getFullName() + " " + person.getDescription());
             }
         }
@@ -82,6 +93,7 @@ public class HandlerMessage {
             }
             if (messageText.equals(ButtonsCaptions.MENU.getCaption())) {
                 personCache.setNewState(userId, BotState.PROFILE_DONE);
+                personCache.resetPagesCounter(userId);
                 return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
             }
         }
@@ -91,6 +103,7 @@ public class HandlerMessage {
             }
             if (messageText.equals(ButtonsCaptions.MENU.getCaption())) {
                 personCache.setNewState(userId, BotState.PROFILE_DONE);
+                personCache.resetPagesCounter(userId);
                 return displayProfile.getMyProfile(message, personCache.getNameAndDescription(userId));
             }
             if (messageText.equals(ButtonsCaptions.LEFT.getCaption())) {
@@ -120,8 +133,8 @@ public class HandlerMessage {
         return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
     }
 
-    private SendMessage getSendMessageQuestionTypeSearch(String messageText, Message message, Long userId) throws IOException, URISyntaxException {
-        personCache.setNameAndDesciption(messageText, userId);
+    private SendMessage getSendMessageQuestionTypeSearch(String messageText, Message message, Long userId, String reg) throws IOException, URISyntaxException {
+        personCache.setNameAndDesciption(messageText, userId, reg);
         personCache.setNewState(userId, BotState.SET_TYPE_SEARCH);
         List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionTypeSearch();
         return SendMessage.builder()

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import ru.liga.tgbot.dto.PersonDTO;
 import ru.liga.tgbot.model.BotState;
 import ru.liga.tgbot.model.Person;
 import ru.liga.tgbot.model.Sex;
@@ -24,16 +25,29 @@ public class PersonCache {
         if (!containsKey(userId)) {
             log.info("Add to cache user: " + userId);
             persons.add(Person.builder()
-                    .id(userId)
+                    .personId(userId)
                     .botState(botState)
                     .pageCounter(1)
                     .build());
         }
     }
 
-    public void setNameAndDesciption(String str, Long userId) {
+    public void setPersonCache(Long userId, PersonDTO personDTO) {
         Person person = getUsersCurrentPerson(userId);
-        String[] params = str.split("\n");
+        person.setId(personDTO.getId());
+        person.setName(personDTO.getFullName());
+        person.setDescription(new StringBuilder(personDTO.getDescription()));
+        person.setSex(Sex.valueOf(personDTO.getGender()));
+        person.setTypeSearch(Sex.valueOf(personDTO.getGenderSearch()));
+        person.setBotState(BotState.PROFILE_DONE);
+        person.setPageCounter(1);
+        persons.add(person);
+        log.info("Set to user: " + userId + " from PersonDTO " + person);
+    }
+
+    public void setNameAndDesciption(String str, Long userId, String reg) {
+        Person person = getUsersCurrentPerson(userId);
+        String[] params = str.split(reg);
         for (int i = 0; i < params.length; i++) {
             if (i == 0) {
                 person.setName(params[0]);
@@ -55,7 +69,7 @@ public class PersonCache {
 
     public void setNewState(Long userId, BotState botState) {
         for (Person person : persons) {
-            if (person.getId().equals(userId)) {
+            if (person.getPersonId().equals(userId)) {
                 person.setBotState(botState);
             }
         }
@@ -76,7 +90,7 @@ public class PersonCache {
 
     public BotState getUsersCurrentBotState(Long userId) {
         for (Person person : persons) {
-            if (person.getId().equals(userId)) {
+            if (person.getPersonId().equals(userId)) {
                 return person.getBotState();
             }
         }
@@ -85,16 +99,16 @@ public class PersonCache {
 
     public Person getUsersCurrentPerson(Long userId) {
         for (Person person : persons) {
-            if (person.getId().equals(userId)) {
+            if (person.getPersonId().equals(userId)) {
                 return person;
             }
         }
-        return Person.builder().id(userId).build();
+        return Person.builder().personId(userId).build();
     }
 
     public boolean containsKey(Long userId) {
         for (Person person : persons) {
-            if (person.getId().equals(userId)) {
+            if (person.getPersonId().equals(userId)) {
                 return true;
             }
         }
@@ -116,6 +130,11 @@ public class PersonCache {
     public Long getLikedPersonId(Long userId) {
         Person person = getUsersCurrentPerson(userId);
         return person.getLikedPersonId();
+    }
+
+    public void resetPagesCounter(Long userId) {
+        Person person = getUsersCurrentPerson(userId);
+        person.setPageCounter(1);
     }
 
     public int incrementPagesCounter(Long userId) {

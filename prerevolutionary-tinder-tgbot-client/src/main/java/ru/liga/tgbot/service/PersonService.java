@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import ru.liga.tgbot.dto.LikedPersonDTO;
 import ru.liga.tgbot.dto.PersonDTO;
 import ru.liga.tgbot.model.Person;
 import ru.liga.tgbot.model.PreReformText;
@@ -18,16 +19,15 @@ public class PersonService {
     public PersonDTO createPerson(Person person) throws URISyntaxException {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
+        //http://localhost:8085/ -- в application.properties
         URI url = new URI("http://localhost:8085/persons");
         PersonDTO objEmp = new PersonDTO(person);
 
         HttpEntity<PersonDTO> requestEntity = new HttpEntity<>(objEmp, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        PersonDTO responseEntity = restTemplate.postForObject(url, requestEntity, PersonDTO.class);
 
-        return responseEntity;
+        return restTemplate.postForObject(url, requestEntity, PersonDTO.class);
     }
 
     public PersonDTO getPerson(Long userId) throws URISyntaxException {
@@ -37,9 +37,8 @@ public class PersonService {
         URI url = new URI("http://localhost:8085/persons/" + userId);
 
         RestTemplate restTemplate = new RestTemplate();
-        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
 
-        return responseEntity;
+        return restTemplate.getForObject(url, PersonDTO.class);
     }
 
     public PersonDTO getSuitablePerson(Long userId, int page) throws URISyntaxException {
@@ -49,9 +48,8 @@ public class PersonService {
         URI url = new URI("http://localhost:8085/persons/" + userId + "/suitable/" + page);
 
         RestTemplate restTemplate = new RestTemplate();
-        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
 
-        return responseEntity;
+        return restTemplate.getForObject(url, PersonDTO.class);
     }
 
     public PersonDTO getFavoritePerson(Long userId, int page) throws URISyntaxException {
@@ -61,9 +59,8 @@ public class PersonService {
         URI url = new URI("http://localhost:8085/persons/" + userId + "/favorite/" + page);
 
         RestTemplate restTemplate = new RestTemplate();
-        PersonDTO responseEntity = restTemplate.getForObject(url, PersonDTO.class);
 
-        return responseEntity;
+        return restTemplate.getForObject(url, PersonDTO.class);
     }
 
     public Integer getCountSuitablePerson(Long userId) throws URISyntaxException {
@@ -88,12 +85,12 @@ public class PersonService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        URI url = new URI("http://localhost:8085/persons/" + userId + "/favorite");
+        URI url = new URI("http://localhost:8085/favorite");
 
-        HttpEntity<Long> requestEntity = new HttpEntity<>(likedPersonId, headers);
+        HttpEntity<LikedPersonDTO> requestEntity = new HttpEntity<>(new LikedPersonDTO(userId, likedPersonId), headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        Long result = restTemplate.postForObject(url, requestEntity, Long.class);
+        LikedPersonDTO result = restTemplate.postForObject(url, requestEntity, LikedPersonDTO.class);
     }
 
 }

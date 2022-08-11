@@ -40,8 +40,8 @@ public class ButtonsMaker {
                         .callbackData(Sex.FEMALE + ":" + ButtonsCaptions.FEMALE.getCaption())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.BI.getCaption())
-                        .callbackData(Sex.BI + ":" + ButtonsCaptions.BI.getCaption())
+                        .text(ButtonsCaptions.ALL.getCaption())
+                        .callbackData(Sex.ALL + ":" + ButtonsCaptions.ALL.getCaption())
                         .build()));
         return buttons;
     }
@@ -52,6 +52,10 @@ public class ButtonsMaker {
                 InlineKeyboardButton.builder()
                         .text(ButtonsCaptions.SEARCH.getCaption())
                         .callbackData(BotState.SEARCH.toString())
+                        .build(),
+                InlineKeyboardButton.builder()
+                        .text(ButtonsCaptions.EDIT.getCaption())
+                        .callbackData(BotState.FAVORITES.toString())
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(ButtonsCaptions.FAVORITES.getCaption())

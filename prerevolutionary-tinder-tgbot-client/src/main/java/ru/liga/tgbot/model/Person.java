@@ -9,6 +9,7 @@ import lombok.Data;
 @Builder
 public class Person {
     private Long id;
+    private Long personId;
     private Sex sex;
     private String name;
     private StringBuilder description;
