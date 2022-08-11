@@ -39,8 +39,8 @@ public class PersonMapping {
     }
 
     private String getLikedPersonStatus(Long mainPersonId, Long likedPersonId) {
-        LikedPerson likePerson = likedPersonRepository.getByMainPersonIdAndLikedPersonId(mainPersonId, likedPersonId);
-        LikedPerson likedMePerson = likedPersonRepository.getByMainPersonIdAndLikedPersonId(likedPersonId, mainPersonId);
+        LikedPerson likePerson = likedPersonRepository.getByMainIdAndLikedId(mainPersonId, likedPersonId);
+        LikedPerson likedMePerson = likedPersonRepository.getByMainIdAndLikedId(likedPersonId, mainPersonId);
 
         if (likePerson != null && likedMePerson != null) {
             return "RECIPROCITY";

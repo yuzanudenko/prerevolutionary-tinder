@@ -8,9 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.liga.server.dto.PersonDto;
 import ru.liga.server.dto.mapping.PersonMapping;
-import ru.liga.server.model.LikedPerson;
 import ru.liga.server.model.Person;
-import ru.liga.server.repository.LikedPersonRepository;
 import ru.liga.server.repository.PersonRepository;
 
 import java.util.List;
@@ -20,8 +18,6 @@ import java.util.List;
 public class PersonService {
 
     private final PersonRepository personRepository;
-    private final LikedPersonRepository likedPersonRepository;
-
     private final PersonMapping personMapping;
 
     public List<Person> findAll() {
@@ -54,13 +50,6 @@ public class PersonService {
 
     public int findSuitablePersonsCount(Long personId) {
         return personRepository.findSuitablePersonsCount(personId);
-    }
-
-    public void saveLikePerson(Long personId, Long likedPersonId) {
-        Long mainId = personRepository.findByPersonId(personId).getId();
-        Long likedId = personRepository.findByPersonId(likedPersonId).getId();
-        LikedPerson likedPerson = new LikedPerson(mainId, likedId);
-        likedPersonRepository.save(likedPerson);
     }
 
     public List<PersonDto> findAllFavoritePersons(Long personId) {

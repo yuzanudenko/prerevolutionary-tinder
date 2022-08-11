@@ -18,8 +18,8 @@
             <column autoIncrement="true" name="id" type="BIGINT">
                 <constraints primaryKey="true"/>
             </column>
-            <column name="main_person_id" type="BIGINT"/>
-            <column name="liked_person_id" type="BIGINT"/>
+            <column name="main_id" type="BIGINT"/>
+            <column name="liked_id" type="BIGINT"/>
         </createTable>
     </changeSet>
 </databaseChangeLog>

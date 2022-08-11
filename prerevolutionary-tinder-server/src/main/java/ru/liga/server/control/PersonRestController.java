@@ -1,9 +1,6 @@
 package ru.liga.server.control;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.liga.server.dto.PersonDto;
@@ -55,12 +52,6 @@ public class PersonRestController {
         return personService.findSuitablePersonsCount(personId);
     }
 
-    @PostMapping("/{personId}/favorite")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void likePerson(@PathVariable Long personId, @RequestBody Long likedPersonId) {
-        personService.saveLikePerson(personId, likedPersonId);
-    }
-
     @GetMapping("/{personId}/favorite")
     @ResponseStatus(HttpStatus.OK)
     public List<PersonDto> findAllFavoritePersons(@PathVariable Long personId) {
@@ -76,8 +67,7 @@ public class PersonRestController {
     @GetMapping("/{personId}/favorite/count")
     @ResponseStatus(HttpStatus.OK)
     public int getFavoritePersonsCount(@PathVariable Long personId) {
-        //return personService.getFavoritePersonsCount(personId);
-        return personService.findAllFavoritePersons(personId).size();
+        return personService.getFavoritePersonsCount(personId);
     }
 
     @PostMapping

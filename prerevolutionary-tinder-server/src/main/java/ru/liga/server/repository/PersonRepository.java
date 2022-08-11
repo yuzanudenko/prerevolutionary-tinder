@@ -28,16 +28,16 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
     @Query("select distinct p " +
             "from Person p, Person pm, LikedPerson lp1, LikedPerson lp2 " +
             "where  " +
-            "(lp1.likedPersonId = p.id and pm.id = lp1.mainPersonId or " +
-            " lp2.mainPersonId = p.id and pm.id = lp2.likedPersonId) and " +
+            "(lp1.likedId = p.id and pm.id = lp1.mainId or " +
+            " lp2.mainId = p.id and pm.id = lp2.likedId) and " +
             "pm.personId = ?1")
     Page<Person> findLikedPersons(Long personId, Pageable pageable);
 
-    @Query("select distinct count(p.id) " +
+    @Query("select count(distinct p.id) " +
             "from Person p, Person pm, LikedPerson lp1, LikedPerson lp2 " +
             "where  " +
-            "(lp1.likedPersonId = p.id and pm.id = lp1.mainPersonId or " +
-            " lp2.mainPersonId = p.id and pm.id = lp2.likedPersonId) and " +
+            "(lp1.likedId = p.id and pm.id = lp1.mainId or " +
+            " lp2.mainId = p.id and pm.id = lp2.likedId) and " +
             "pm.personId = ?1")
     int findLikedPersonsCount(Long personId);
 }

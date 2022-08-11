@@ -1,6 +1,8 @@
 package ru.liga.server.model;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -14,14 +16,14 @@ public class LikedPerson {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "MAIN_PERSON_ID")
-    private Long mainPersonId;
+    @Column(name = "MAIN_ID")
+    private Long mainId;
 
-    @Column(name = "LIKED_PERSON_ID")
-    private Long likedPersonId;
+    @Column(name = "LIKED_ID")
+    private Long likedId;
 
-    public LikedPerson(Long mainPersonId, Long likedPersonId) {
-        this.mainPersonId = mainPersonId;
-        this.likedPersonId = likedPersonId;
+    public LikedPerson(Long mainId, Long likedId) {
+        this.mainId = mainId;
+        this.likedId = likedId;
     }
 }
