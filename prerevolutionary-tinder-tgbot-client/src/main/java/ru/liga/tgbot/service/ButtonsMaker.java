@@ -4,8 +4,8 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import ru.liga.tgbot.model.Action;
 import ru.liga.tgbot.model.BotState;
-import ru.liga.tgbot.model.ButtonsCaptions;
 import ru.liga.tgbot.model.Sex;
 
 import java.util.ArrayList;
@@ -18,12 +18,12 @@ public class ButtonsMaker {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(Arrays.asList(
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.MALE.getCaption())
-                        .callbackData(Sex.MALE + ":" + ButtonsCaptions.MALE.getCaption())
+                        .text(Action.MALE.getCaption())
+                        .callbackData(Sex.MALE + ":" + Action.MALE.getCaption())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.FEMALE.getCaption())
-                        .callbackData(Sex.FEMALE + ":" + ButtonsCaptions.FEMALE.getCaption())
+                        .text(Action.FEMALE.getCaption())
+                        .callbackData(Sex.FEMALE + ":" + Action.FEMALE.getCaption())
                         .build()));
         return buttons;
     }
@@ -32,16 +32,16 @@ public class ButtonsMaker {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(Arrays.asList(
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.MALE.getCaption())
-                        .callbackData(Sex.MALE + ":" + ButtonsCaptions.MALE.getCaption())
+                        .text(Action.MALE.getCaption())
+                        .callbackData(Sex.MALE + ":" + Action.MALE.getCaption())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.FEMALE.getCaption())
-                        .callbackData(Sex.FEMALE + ":" + ButtonsCaptions.FEMALE.getCaption())
+                        .text(Action.FEMALE.getCaption())
+                        .callbackData(Sex.FEMALE + ":" + Action.FEMALE.getCaption())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.ALL.getCaption())
-                        .callbackData(Sex.ALL + ":" + ButtonsCaptions.ALL.getCaption())
+                        .text(Action.ALL.getCaption())
+                        .callbackData(Sex.ALL + ":" + Action.ALL.getCaption())
                         .build()));
         return buttons;
     }
@@ -50,15 +50,15 @@ public class ButtonsMaker {
         List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
         buttons.add(Arrays.asList(
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.SEARCH.getCaption())
+                        .text(Action.SEARCH.getCaption())
                         .callbackData(BotState.SEARCH.toString())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.EDIT.getCaption())
+                        .text(Action.EDIT.getCaption())
                         .callbackData(BotState.EDIT.toString())
                         .build(),
                 InlineKeyboardButton.builder()
-                        .text(ButtonsCaptions.FAVORITES.getCaption())
+                        .text(Action.FAVORITES.getCaption())
                         .callbackData(BotState.FAVORITES.toString())
                         .build()));
         return buttons;
@@ -69,9 +69,9 @@ public class ButtonsMaker {
         List<KeyboardRow> keyboard = new ArrayList<>();
         KeyboardRow row = new KeyboardRow();
 
-        row.add(ButtonsCaptions.LEFT.getCaption());
-        row.add(ButtonsCaptions.MENU.getCaption());
-        row.add(ButtonsCaptions.RIGHT.getCaption());
+        row.add(Action.LEFT.getCaption());
+        row.add(Action.MENU.getCaption());
+        row.add(Action.RIGHT.getCaption());
 
         keyboard.add(row);
         keyboardMarkup.setKeyboard(keyboard);

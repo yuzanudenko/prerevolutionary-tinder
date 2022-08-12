@@ -1,15 +1,15 @@
 package ru.liga.tgbot.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import ru.liga.tgbot.config.RestTemplateConfig;
 import ru.liga.tgbot.dto.TextToPictureDTO;
 import ru.liga.tgbot.model.PreReformText;
 
-
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -18,35 +18,35 @@ import java.nio.file.Paths;
 
 @Service
 public class ProfileService {
+    @Value("${translate.url}")
+    private String translateUrl;
+    @Value("${profileToPicture.url}")
+    private String profileToPictureUrl;
+    @Value("${path.image}")
+    private String filePath;
+    @Autowired
+    private RestTemplateConfig restTemplateConfig;
 
     public PreReformText translate(String text) throws URISyntaxException {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        URI url = new URI("http://localhost:8080/translate");
+        HttpHeaders headers = getHttpHeaders();
+        URI url = new URI(translateUrl);
         PreReformText objEmp = new PreReformText(text);
-
         HttpEntity<PreReformText> requestEntity = new HttpEntity<>(objEmp, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        PreReformText responseEntity = restTemplate.postForObject(url, requestEntity, PreReformText.class);
-
-        return responseEntity;
+        return restTemplateConfig.getRestTemplate().postForObject(url, requestEntity, PreReformText.class);
     }
 
-    public byte[] profileToPicture(String text) throws URISyntaxException, IOException {
+    public void profileToPicture(String text) throws URISyntaxException, IOException {
+        HttpHeaders headers = getHttpHeaders();
+        URI url = new URI(profileToPictureUrl);
+        TextToPictureDTO objEmp = new TextToPictureDTO(text);
+        HttpEntity<TextToPictureDTO> requestEntity = new HttpEntity<>(objEmp, headers);
+        byte[] responseEntity = restTemplateConfig.getRestTemplate().postForObject(url, requestEntity, byte[].class);
+        Files.write(Paths.get(filePath), responseEntity);
+    }
+
+    private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-
-        URI url = new URI("http://localhost:8082/pict");
-        TextToPictureDTO objEmp = new TextToPictureDTO(text);
-
-        HttpEntity<TextToPictureDTO> requestEntity = new HttpEntity<>(objEmp, headers);
-
-        RestTemplate restTemplate = new RestTemplate();
-        byte[] responseEntity = restTemplate.postForObject(url, requestEntity, byte[].class);
-
-        Files.write(Paths.get("prerevolutionary-tinder-tgbot-client/src/main/resources/image.jpg"), responseEntity);
-        return responseEntity;
+        return headers;
     }
 }

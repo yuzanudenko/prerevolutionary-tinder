@@ -9,7 +9,6 @@ import ru.liga.tgbot.model.BotState;
 import ru.liga.tgbot.model.Person;
 import ru.liga.tgbot.model.Sex;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +28,6 @@ public class PersonCache {
                     .botState(botState)
                     .pageCounter(1)
                     .build());
-            log.info("Add to cache user: " + getUsersCurrentPerson(userId));
         }
     }
 
@@ -46,7 +44,7 @@ public class PersonCache {
         log.info("Set to user: " + userId + " from PersonDTO " + person);
     }
 
-    public void setNameAndDesciption(String str, Long userId, String reg) {
+    public void setNameAndDescription(String str, Long userId, String reg) {
         Person person = getUsersCurrentPerson(userId);
         String[] params = str.split(reg);
         for (int i = 0; i < params.length; i++) {

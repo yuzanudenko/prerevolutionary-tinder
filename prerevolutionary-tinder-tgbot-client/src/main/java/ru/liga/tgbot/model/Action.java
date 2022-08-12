@@ -1,6 +1,6 @@
 package ru.liga.tgbot.model;
 
-public enum ButtonsCaptions {
+public enum Action {
     MALE("Сударъ"),
     FEMALE("Сударыня"),
     ALL("Всех"),
@@ -17,7 +17,7 @@ public enum ButtonsCaptions {
 
     private String caption;
 
-    ButtonsCaptions(String caption) {
+    Action(String caption) {
         this.caption = caption;
     }
 

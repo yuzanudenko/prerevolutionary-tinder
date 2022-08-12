@@ -1,8 +1,8 @@
 package ru.liga.tgbot.service;
 
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -10,30 +10,30 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMa
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import ru.liga.tgbot.cache.PersonCache;
-import ru.liga.tgbot.model.BotState;
+import ru.liga.tgbot.dto.PersonDTO;
+import ru.liga.tgbot.model.Action;
 import ru.liga.tgbot.model.PreReformText;
 
-
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
 @Component
-@AllArgsConstructor
 public class DisplayProfile {
+    @Autowired
     private PersonCache personCache;
+    @Autowired
     private ProfileService profileService;
+    @Autowired
     private ButtonsMaker buttonsMaker;
+    @Value("${path.image}")
+    private String filePath;
+
 
     public SendPhoto getMyProfile(Message message, String text) throws IOException, URISyntaxException {
         List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForGetMyProfile();
-        PreReformText preReformText = profileService.translate(text);
-        InputStream inputStream = new ByteArrayInputStream(profileService.profileToPicture(preReformText.getText()));
-        File file = new File("prerevolutionary-tinder-tgbot-client/src/main/resources/image.jpg");
-        InputFile inputFile = new InputFile(file);
+        InputFile inputFile = getInputFile(text);
         return SendPhoto.builder()
                 .chatId(message.getChatId().toString())
                 .photo(inputFile)
@@ -41,12 +41,9 @@ public class DisplayProfile {
                 .build();
     }
 
-    public SendPhoto getProfile(Message message, String text) throws IOException, URISyntaxException {
+    public SendPhoto getProfile(Message message, PersonDTO personDTO) throws IOException, URISyntaxException {
         ReplyKeyboardMarkup keyboardMarkup = buttonsMaker.createButtonsForGetProfile();
-        PreReformText preReformText = profileService.translate(text);
-        InputStream inputStream = new ByteArrayInputStream(profileService.profileToPicture(preReformText.getText()));
-        File file = new File("prerevolutionary-tinder-tgbot-client/src/main/resources/image.jpg");
-        InputFile inputFile = new InputFile(file);
+        InputFile inputFile = getInputFile(getProfileText(personDTO));
         return SendPhoto.builder()
                 .chatId(message.getChatId().toString())
                 .photo(inputFile)
@@ -54,14 +51,18 @@ public class DisplayProfile {
                 .build();
     }
 
-    public SendMessage getSengMessageQuestionSex(Message message, Long userId) {
-        List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionSex();
-        personCache.setNewState(userId, BotState.SET_SEX);
+    private InputFile getInputFile(String text) throws URISyntaxException, IOException {
+        PreReformText preReformText = profileService.translate(text);
+        profileService.profileToPicture(preReformText.getText());
+        File file = new File(filePath);
+        return new InputFile(file);
+    }
 
-        return SendMessage.builder()
-                .chatId(message.getChatId().toString())
-                .text("Вы сударь иль сударыня?")
-                .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
-                .build();
+    private String getProfileText(PersonDTO personDTO) {
+        if (personDTO.getStatus() != null) {
+            return personDTO.getFullName() + " - " + Action.valueOf(personDTO.getStatus()).getCaption() + "\n" + personDTO.getDescription();
+        } else {
+            return personDTO.getFullName()  + "\n" + personDTO.getDescription();
+        }
     }
 }
