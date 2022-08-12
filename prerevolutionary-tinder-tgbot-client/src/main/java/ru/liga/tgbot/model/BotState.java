@@ -7,5 +7,6 @@ public enum BotState {
     SET_TYPE_SEARCH,
     PROFILE_DONE,
     SEARCH,
+    EDIT,
     FAVORITES;
 }

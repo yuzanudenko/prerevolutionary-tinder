@@ -3,10 +3,12 @@ package ru.liga.tgbot.model;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @Builder
+@ToString
 public class Person {
     private Long id;
     private Long personId;

@@ -29,6 +29,7 @@ public class PersonCache {
                     .botState(botState)
                     .pageCounter(1)
                     .build());
+            log.info("Add to cache user: " + getUsersCurrentPerson(userId));
         }
     }
 
@@ -51,9 +52,10 @@ public class PersonCache {
         for (int i = 0; i < params.length; i++) {
             if (i == 0) {
                 person.setName(params[0]);
+                person.setDescription(new StringBuilder());
             } else {
                 if (person.getDescription() == null) {
-                    person.setDescription(new StringBuilder().append(params[i]));
+                    person.setDescription(person.getDescription().append(params[i]));
                 } else {
                     person.setDescription(person.getDescription().append(" ").append(params[i]));
                 }
@@ -119,6 +121,11 @@ public class PersonCache {
         Person person = getUsersCurrentPerson(userId);
         person.setPages(counter);
         log.info("Set to user: " + userId + " pages - " + counter);
+    }
+
+    public int getPages(Long userId) {
+        Person person = getUsersCurrentPerson(userId);
+        return person.getPages();
     }
 
     public void setLikedPersonId(Long userId, Long likedPersonId) {

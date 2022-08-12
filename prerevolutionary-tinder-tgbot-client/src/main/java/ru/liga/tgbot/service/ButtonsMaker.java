@@ -55,7 +55,7 @@ public class ButtonsMaker {
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(ButtonsCaptions.EDIT.getCaption())
-                        .callbackData(BotState.FAVORITES.toString())
+                        .callbackData(BotState.EDIT.toString())
                         .build(),
                 InlineKeyboardButton.builder()
                         .text(ButtonsCaptions.FAVORITES.getCaption())

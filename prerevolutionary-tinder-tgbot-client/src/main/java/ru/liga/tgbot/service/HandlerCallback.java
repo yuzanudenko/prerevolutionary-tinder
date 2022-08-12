@@ -36,6 +36,13 @@ public class HandlerCallback {
             personCache.setNewSex(userId, Sex.valueOf(param[0]));
             return SendMessage.builder().chatId(message.getChatId().toString()).text("Поздравляю " + param[1] + ", теперь введите вашу инфу и описание").build();
         }
+        if (botState.equals(BotState.EDIT)) {
+            return displayProfile.getSengMessageQuestionSex(message, userId);
+        }
+        if (botState.equals(BotState.FAVORITES) && personCache.getPages(userId) == 0) {
+            personCache.setNewState(userId, BotState.PROFILE_DONE);
+            return SendMessage.builder().chatId(message.getChatId().toString()).text("К сожалению у вас еще нету любимцев").build();
+        }
 
         return SendMessage.builder().chatId(message.getChatId().toString()).text("Сорри, это не поддерживается").build();
     }
@@ -72,13 +79,13 @@ public class HandlerCallback {
                 int pagesCounter = personService.getCountFavoritePerson(userId);
                 personCache.setPages(userId, pagesCounter);
                 personCache.resetPagesCounter(userId);
-                PersonDTO personDTO = personService.getFavoritePerson(userId, 1);
-                personCache.setLikedPersonId(userId, personDTO.getPersonId());
-                return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
+                if (pagesCounter > 0) {
+                    PersonDTO personDTO = personService.getFavoritePerson(userId, 1);
+                    personCache.setLikedPersonId(userId, personDTO.getPersonId());
+                    return displayProfile.getProfile(message, personDTO.NameWithStatusDescription());
+                }
             }
         }
-
-
         return null;
     }
 }

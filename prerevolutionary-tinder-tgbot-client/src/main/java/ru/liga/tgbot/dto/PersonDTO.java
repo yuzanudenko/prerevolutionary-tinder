@@ -22,7 +22,7 @@ public class PersonDTO {
     private String status;
 
     public PersonDTO(Person person) {
-        this.id = person.getPersonId();
+        this.id = person.getId();
         this.gender = person.getSex().toString();
         this.personId = person.getPersonId();
         this.fullName = person.getName();

@@ -38,7 +38,7 @@ public class ProfileService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
-        URI url = new URI("https://pict-serv-2-0-fixey-dev.apps.sandbox-m2.ll9k.p1.openshiftapps.com/pict");
+        URI url = new URI("http://localhost:8082/pict");
         TextToPictureDTO objEmp = new TextToPictureDTO(text);
 
         HttpEntity<TextToPictureDTO> requestEntity = new HttpEntity<>(objEmp, headers);
