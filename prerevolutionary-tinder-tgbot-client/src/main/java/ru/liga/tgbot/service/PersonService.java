@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 public class PersonService {
     @Value("${person.url}")
     private String personsUrl;
-    @Value("${person.url}")
+    @Value("${favorite.url}")
     private String favoriteUrl;
     @Autowired
     private RestTemplateConfig restTemplateConfig;
