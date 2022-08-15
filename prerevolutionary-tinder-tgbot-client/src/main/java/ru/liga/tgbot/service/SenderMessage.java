@@ -17,6 +17,12 @@ public class SenderMessage {
     @Autowired
     private PersonCache personCache;
 
+    /**
+     * Сообщение для вопроса пола
+     *
+     * @param message Входящее сообщение
+     * @return Сообщение, готовое для отправки
+     */
     public SendMessage getSendMessageQuestionSex(Message message) {
         List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionSex();
         return SendMessage.builder()
@@ -26,6 +32,12 @@ public class SenderMessage {
                 .build();
     }
 
+    /**
+     * Сообщение для вопроса пола для поиска
+     *
+     * @param message Входящее сообщение
+     * @return Сообщение, готовое для отправки
+     */
     public SendMessage getSendMessageQuestionTypeSearch(Message message) {
         List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionTypeSearch();
         return SendMessage.builder()
@@ -34,10 +46,24 @@ public class SenderMessage {
                 .text("\n ❔Выберете теперь кого ищем!").build();
     }
 
+    /**
+     * Сообщение после выбора пола
+     *
+     * @param chatId Id чата для отправки
+     * @param sex    выбранный пол
+     * @return Сообщение, готовое для отправки
+     */
     public SendMessage getSendSuccessSetSex(String chatId, String sex) {
         return SendMessage.builder().chatId(chatId).text("Поздравляю " + sex + ", теперь введите вашу инфу и описание \uD83D\uDE0E").build();
     }
 
+    /**
+     * Сообщение с передаваемым текстом
+     *
+     * @param chatId Id чата для отправки
+     * @param text   текст сообщения
+     * @return Сообщение, готовое для отправки
+     */
     public SendMessage getSendMessage(String chatId, String text) {
         return SendMessage.builder().chatId(chatId).text(text).build();
     }

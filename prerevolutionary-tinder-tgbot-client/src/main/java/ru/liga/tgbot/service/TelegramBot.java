@@ -1,7 +1,6 @@
 package ru.liga.tgbot.service;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
@@ -43,18 +42,26 @@ public class TelegramBot extends TelegramLongPollingBot {
             try {
                 handleMessage(update);
             } catch (TelegramApiException | IOException | URISyntaxException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
         if (update.hasCallbackQuery()) {
             try {
                 handleCallBack(update.getCallbackQuery());
             } catch (IOException | URISyntaxException | TelegramApiException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
         }
     }
 
+    /**
+     * Обработка нажатий на кнопку
+     *
+     * @param callbackQuery колбэк кнопки
+     * @throws IOException
+     * @throws URISyntaxException
+     * @throws TelegramApiException
+     */
     private void handleCallBack(CallbackQuery callbackQuery) throws IOException, URISyntaxException, TelegramApiException {
         SendPhoto sendPhoto = handlerCallback.handleSendPhoto(callbackQuery);
         SendMessage sendMessage = handlerCallback.answerCallback(callbackQuery);
@@ -65,6 +72,14 @@ public class TelegramBot extends TelegramLongPollingBot {
         }
     }
 
+    /**
+     * Обработка получения сообщений
+     *
+     * @param update
+     * @throws TelegramApiException
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     private void handleMessage(Update update) throws TelegramApiException, IOException, URISyntaxException {
         SendPhoto sendPhoto = handlerMessage.handleSendPhoto(update);
         SendMessage sendMessage = handlerMessage.handleSendMessage(update);

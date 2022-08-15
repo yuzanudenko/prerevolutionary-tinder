@@ -27,6 +27,13 @@ public class ProfileService {
     @Autowired
     private RestTemplateConfig restTemplateConfig;
 
+    /**
+     * Сервис вызова перевода текста в старославянский
+     *
+     * @param text Входной обычный текст
+     * @return Итоговый старославянский
+     * @throws URISyntaxException
+     */
     public PreReformText translate(String text) throws URISyntaxException {
         HttpHeaders headers = getHttpHeaders();
         URI url = new URI(translateUrl);
@@ -35,6 +42,13 @@ public class ProfileService {
         return restTemplateConfig.getRestTemplate().postForObject(url, requestEntity, PreReformText.class);
     }
 
+    /**
+     * Сервис для размещения текста на картинке
+     *
+     * @param text входной текст
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     public void profileToPicture(String text) throws URISyntaxException, IOException {
         HttpHeaders headers = getHttpHeaders();
         URI url = new URI(profileToPictureUrl);
@@ -44,6 +58,11 @@ public class ProfileService {
         Files.write(Paths.get(filePath), responseEntity);
     }
 
+    /**
+     * Получение хедера
+     *
+     * @return готовые хедеры
+     */
     private HttpHeaders getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

@@ -29,6 +29,13 @@ public class HandlerCallback {
     @Autowired
     private SenderMessage senderMessage;
 
+    /**
+     * Отправление сообщения после нажатия на кнопку
+     *
+     * @param callbackQuery колбек нажатия на кнопку
+     * @return Итоговое сообщение
+     * @throws URISyntaxException
+     */
     public SendMessage answerCallback(CallbackQuery callbackQuery) throws URISyntaxException {
 
         Message message = callbackQuery.getMessage();
@@ -52,6 +59,14 @@ public class HandlerCallback {
         return senderMessage.getSendMessage(message.getChatId().toString(), "Сорри, это не поддерживается \uD83D\uDE24");
     }
 
+    /**
+     * Отправление Фото после нажатия на кнопку
+     *
+     * @param callbackQuery колбек нажатия на кнопку
+     * @return Итоговое фото
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     public SendPhoto handleSendPhoto(CallbackQuery callbackQuery) throws IOException, URISyntaxException {
         Message message = callbackQuery.getMessage();
         String[] param = callbackQuery.getData().split(":");
@@ -59,21 +74,14 @@ public class HandlerCallback {
         BotState botState = personCache.getUsersCurrentBotState(userId);
 
         if (botState.equals(BotState.SET_TYPE_SEARCH)) {
-            personCache.setNewState(userId, BotState.PROFILE_DONE);
-            personCache.setTypeSearch(userId, Sex.valueOf(param[0]));
-            personService.createPerson(personCache.getUsersCurrentPerson(userId));
-            String text = personCache.getNameAndDescription(userId);
-            return senderPhoto.getMyProfile(message, text);
+            return setTypeSearch(message, param[0], userId);
         }
 
         if (botState.equals(BotState.PROFILE_DONE)) {
             BotState newBotState = BotState.valueOf(param[0]);
             personCache.setNewState(userId, newBotState);
             if (newBotState.equals(BotState.SEARCH)) {
-                setPagesCache(userId, personService.getCountSuitablePerson(userId));
-                PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
-                personCache.setLikedPersonId(userId, personDTO.getPersonId());
-                return senderPhoto.getProfile(message, personDTO);
+                return startSearching(message, userId);
             }
             if (newBotState.equals(BotState.FAVORITES)) {
                 int pagesCounter = personService.getCountFavoritePerson(userId);
@@ -87,6 +95,46 @@ public class HandlerCallback {
         return null;
     }
 
+    /**
+     * Поиск подходящих анкет
+     *
+     * @param message Входящее сообщение
+     * @param userId  Id текущего пользака из Телеграмма
+     * @return Фото с кнопками готовое для отправки
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    private SendPhoto startSearching(Message message, Long userId) throws URISyntaxException, IOException {
+        setPagesCache(userId, personService.getCountSuitablePerson(userId));
+        PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
+        personCache.setLikedPersonId(userId, personDTO.getPersonId());
+        return senderPhoto.getProfile(message, personDTO);
+    }
+
+    /**
+     * Установления пола для поиска и отправка готовой анкеты
+     *
+     * @param message    Входящее сообщение
+     * @param typeSearch пол для поиска
+     * @param userId     Id текущего пользака из Телеграмма
+     * @return Сообщение с готовым профилем и кнопками
+     * @throws URISyntaxException
+     * @throws IOException
+     */
+    private SendPhoto setTypeSearch(Message message, String typeSearch, Long userId) throws URISyntaxException, IOException {
+        personCache.setNewState(userId, BotState.PROFILE_DONE);
+        personCache.setTypeSearch(userId, Sex.valueOf(typeSearch));
+        personService.createPerson(personCache.getUsersCurrentPerson(userId));
+        String text = personCache.getNameAndDescription(userId);
+        return senderPhoto.getMyProfile(message, text);
+    }
+
+    /**
+     * Устновелния кеша, связанного с страницами
+     *
+     * @param userId       Id текущего пользака из Телеграмма
+     * @param pagesCounter Кол-во страниц
+     */
     private void setPagesCache(Long userId, int pagesCounter) {
         personCache.setPages(userId, pagesCounter);
         personCache.resetPagesCounter(userId);

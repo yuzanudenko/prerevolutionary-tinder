@@ -32,6 +32,14 @@ public class HandlerMessage {
     @Autowired
     private SenderMessage senderMessage;
 
+    /**
+     * Отправление сообщения после отправки сообщения
+     *
+     * @param update Объект Update
+     * @return Сообщение, готовое для отправки
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     public SendMessage handleSendMessage(Update update) throws IOException, URISyntaxException {
         String messageText = update.getMessage().getText();
         Message message = update.getMessage();
@@ -49,16 +57,21 @@ public class HandlerMessage {
                 return getSendMessageQuestionSex(message);
             }
         }
-
         BotState botState = personCache.getUsersCurrentBotState(userId);
-
         if (botState.equals(BotState.SET_PROFILE_INFO)) {
             return setProfileInfo(messageText, message, userId);
         }
-
         return senderMessage.getSendMessage(message.getChatId().toString(), "Сорри, это не поддерживается \uD83D\uDE24");
     }
 
+    /**
+     * Отправление фото после отправки сообщения
+     *
+     * @param update Объект Update
+     * @return Сообщение, готовое для отправки
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     public SendPhoto handleSendPhoto(Update update) throws IOException, URISyntaxException {
         String messageText = update.getMessage().getText();
         Message message = update.getMessage();
@@ -99,6 +112,16 @@ public class HandlerMessage {
         return null;
     }
 
+    /**
+     * Установление имени и описания профиля
+     *
+     * @param messageText Текст сообщения
+     * @param message     Объект входящего сообщения
+     * @param userId      Id текущего пользователя из Телеграмма
+     * @return Сообщение, готовое для отправки
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     private SendMessage setProfileInfo(String messageText, Message message, Long userId) throws IOException, URISyntaxException {
         String[] inputDescrTypeFirst = messageText.split("\n");
         String[] inputDescrTypeSecond = messageText.split(" ");
@@ -113,12 +136,30 @@ public class HandlerMessage {
         }
     }
 
+    /**
+     * Получение итогового профиля с кнопками меню
+     *
+     * @param message Объект входящего сообщения
+     * @param userId  Id текущего пользователя из Телеграмма
+     * @return Сообщение, готовое для отправки
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     private SendPhoto getMenuAndProfileWithDescr(Message message, Long userId) throws IOException, URISyntaxException {
         personCache.setNewState(userId, BotState.PROFILE_DONE);
         personCache.resetPagesCounter(userId);
         return senderPhoto.getMyProfile(message, personCache.getNameAndDescription(userId));
     }
 
+    /**
+     * Получение следующего профиля для поиска
+     *
+     * @param message Объект входящего сообщения
+     * @param userId  Id текущего пользователя из Телеграмма
+     * @return Сообщение, готовое для отправки
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     private SendPhoto getNextLikedProfile(Message message, Long userId) throws URISyntaxException, IOException {
         int pagesCounter = personCache.incrementPagesCounter(userId);
         PersonDTO personDTO = personService.getSuitablePerson(userId, pagesCounter);
@@ -126,22 +167,57 @@ public class HandlerMessage {
         return senderPhoto.getProfile(message, personDTO);
     }
 
+    /**
+     * Получение следующего профиля для любимцев
+     *
+     * @param message Объект входящего сообщения
+     * @param userId  Id текущего пользователя из Телеграмма
+     * @return Сообщение, готовое для отправки
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     private SendPhoto getNextFavoriteProfile(Message message, Long userId) throws URISyntaxException, IOException {
         int pagesCounter = personCache.incrementPagesCounter(userId);
         return senderPhoto.getProfile(message, personService.getFavoritePerson(userId, pagesCounter));
     }
 
+    /**
+     * Получение предыдущего профиля для любимцев
+     *
+     * @param message Объект входящего сообщения
+     * @param userId  Id текущего пользователя из Телеграмма
+     * @return Сообщение, готовое для отправки
+     * @throws URISyntaxException
+     * @throws IOException
+     */
     private SendPhoto getPrevFavoriteProfile(Message message, Long userId) throws URISyntaxException, IOException {
         int pagesCounter = personCache.minusPagesCounter(userId);
         return senderPhoto.getProfile(message, personService.getFavoritePerson(userId, pagesCounter));
     }
 
+    /**
+     * Получение сообщения с вопросом выбора пола для поиска
+     *
+     * @param messageText Имя с описанием
+     * @param message     Объект входящего сообщения
+     * @param userId      Id текущего пользователя из Телеграмма
+     * @param reg         Регулярное выражение для парсинга
+     * @return Сообщение, готовое для отправки
+     * @throws IOException
+     * @throws URISyntaxException
+     */
     private SendMessage getSendMessageQuestionTypeSearch(String messageText, Message message, Long userId, String reg) throws IOException, URISyntaxException {
         personCache.setNameAndDescription(messageText, userId, reg);
         personCache.setNewState(userId, BotState.SET_TYPE_SEARCH);
         return senderMessage.getSendMessageQuestionTypeSearch(message);
     }
 
+    /**
+     * Получение сообщения с вопросом выбора пола
+     *
+     * @param message Объект входящего сообщения
+     * @return Сообщение, готовое для отправки
+     */
     private SendMessage getSendMessageQuestionSex(Message message) {
         personCache.addPersonCache(message.getChat().getId(), BotState.SET_SEX);
         return senderMessage.getSendMessageQuestionSex(message);
