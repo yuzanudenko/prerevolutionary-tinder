@@ -20,7 +20,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 @Component
-public class DisplayProfile {
+public class SenderPhoto {
     @Autowired
     private PersonCache personCache;
     @Autowired

@@ -25,7 +25,7 @@ public class HandlerCallback {
     @Autowired
     private ProfileService profileService;
     @Autowired
-    private DisplayProfile displayProfile;
+    private SenderPhoto senderPhoto;
     @Autowired
     private SenderMessage senderMessage;
 
@@ -43,7 +43,7 @@ public class HandlerCallback {
         }
         if (botState.equals(BotState.EDIT)) {
             personCache.setNewState(userId, BotState.SET_SEX);
-            return senderMessage.getSendMessageQuestionSex(message, userId);
+            return senderMessage.getSendMessageQuestionSex(message);
         }
         if (botState.equals(BotState.FAVORITES) && personCache.getPages(userId) == 0) {
             personCache.setNewState(userId, BotState.PROFILE_DONE);
@@ -63,7 +63,7 @@ public class HandlerCallback {
             personCache.setTypeSearch(userId, Sex.valueOf(param[0]));
             personService.createPerson(personCache.getUsersCurrentPerson(userId));
             String text = personCache.getNameAndDescription(userId);
-            return displayProfile.getMyProfile(message, text);
+            return senderPhoto.getMyProfile(message, text);
         }
 
         if (botState.equals(BotState.PROFILE_DONE)) {
@@ -73,14 +73,14 @@ public class HandlerCallback {
                 setPagesCache(userId, personService.getCountSuitablePerson(userId));
                 PersonDTO personDTO = personService.getSuitablePerson(userId, 1);
                 personCache.setLikedPersonId(userId, personDTO.getPersonId());
-                return displayProfile.getProfile(message, personDTO);
+                return senderPhoto.getProfile(message, personDTO);
             }
             if (newBotState.equals(BotState.FAVORITES)) {
                 int pagesCounter = personService.getCountFavoritePerson(userId);
                 setPagesCache(userId, pagesCounter);
                 if (pagesCounter > 0) {
                     PersonDTO personDTO = personService.getFavoritePerson(userId, 1);
-                    return displayProfile.getProfile(message, personDTO);
+                    return senderPhoto.getProfile(message, personDTO);
                 }
             }
         }

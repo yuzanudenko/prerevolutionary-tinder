@@ -17,13 +17,21 @@ public class SenderMessage {
     @Autowired
     private PersonCache personCache;
 
-    public SendMessage getSendMessageQuestionSex(Message message, Long userId) {
+    public SendMessage getSendMessageQuestionSex(Message message) {
         List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionSex();
         return SendMessage.builder()
                 .chatId(message.getChatId().toString())
                 .text("Вы сударь иль сударыня?")
                 .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
                 .build();
+    }
+
+    public SendMessage getSendMessageQuestionTypeSearch(Message message) {
+        List<List<InlineKeyboardButton>> buttons = buttonsMaker.createButtonsForQuestionTypeSearch();
+        return SendMessage.builder()
+                .chatId(message.getChatId().toString())
+                .replyMarkup(InlineKeyboardMarkup.builder().keyboard(buttons).build())
+                .text("\n ❔Выберете теперь кого ищем!").build();
     }
 
     public SendMessage getSendSuccessSetSex(String chatId, String sex) {
