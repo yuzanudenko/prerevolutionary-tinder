@@ -1,7 +1,7 @@
 package ru.liga.tgbot.service;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -18,11 +18,14 @@ import java.net.URISyntaxException;
 
 @Slf4j
 @Component
-@AllArgsConstructor
 public class TelegramBot extends TelegramLongPollingBot {
-    private final BotConfig config;
+    @Autowired
+    private BotConfig config;
+    @Autowired
     private PersonCache personCache;
+    @Autowired
     private HandlerMessage handlerMessage;
+    @Autowired
     private HandlerCallback handlerCallback;
 
 
