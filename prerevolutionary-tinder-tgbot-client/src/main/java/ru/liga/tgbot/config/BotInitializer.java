@@ -10,8 +10,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 import ru.liga.tgbot.service.TelegramBot;
 
-
-//TODO Перенести
 @Slf4j
 @Component
 public class BotInitializer {
