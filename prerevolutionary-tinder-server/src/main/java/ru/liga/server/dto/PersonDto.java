@@ -2,6 +2,9 @@ package ru.liga.server.dto;
 
 import lombok.Data;
 
+/**
+ * Представление пользователя
+ */
 @Data
 public class PersonDto {
     private Long id;

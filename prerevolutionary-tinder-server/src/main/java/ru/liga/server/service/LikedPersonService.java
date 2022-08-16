@@ -12,6 +12,12 @@ public class LikedPersonService {
     private final LikedPersonRepository likedPersonRepository;
     private final PersonRepository personRepository;
 
+    /**
+     * Создание связи между пользователями
+     *
+     * @param likedPerson Данные о свзи пользователей
+     * @return Данные о связи пользователей
+     */
     public LikedPerson likePerson(LikedPerson likedPerson) {
         Long mainId = personRepository.findByPersonId(likedPerson.getMainId()).getId();
         Long likedId = personRepository.findByPersonId(likedPerson.getLikedId()).getId();

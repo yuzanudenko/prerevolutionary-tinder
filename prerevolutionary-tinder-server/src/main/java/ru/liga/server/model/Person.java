@@ -8,6 +8,9 @@ import org.hibernate.Hibernate;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Модель данных пользователя
+ */
 @Entity
 @Getter
 @Setter
@@ -32,17 +35,4 @@ public class Person {
 
     @Column(name = "GENDER_SEARCH")
     private String genderSearch;
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Person person = (Person) o;
-        return id != null && Objects.equals(id, person.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }

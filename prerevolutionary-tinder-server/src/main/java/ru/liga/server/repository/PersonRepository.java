@@ -23,7 +23,7 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
             "and (p1.gender = p2.genderSearch or (p2.genderSearch = 'ALL' and p1.gender in ('MALE', 'FEMALE'))) " +
             "and (p1.personId <> ?1 or p1.personId is null) " +
             "and p2.personId = ?1")
-    int findSuitablePersonsCount(Long personId);
+    int getSuitablePersonsCount(Long personId);
 
     @Query("select distinct p " +
             "from Person p, Person pm, LikedPerson lp1, LikedPerson lp2 " +
@@ -39,5 +39,5 @@ public interface PersonRepository extends JpaRepository<Person, Long> {
             "(lp1.likedId = p.id and pm.id = lp1.mainId or " +
             " lp2.mainId = p.id and pm.id = lp2.likedId) and " +
             "pm.personId = ?1")
-    int findLikedPersonsCount(Long personId);
+    int getLikedPersonsCount(Long personId);
 }

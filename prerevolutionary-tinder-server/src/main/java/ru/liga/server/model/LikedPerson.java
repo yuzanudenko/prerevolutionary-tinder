@@ -6,6 +6,9 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
+/**
+ * Модель данных связи пользователей
+ */
 @Entity
 @Getter
 @Setter
